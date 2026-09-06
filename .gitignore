@@ -1,0 +1,12 @@
+# Backend (Python)
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+*.pyc
+backend/.env
+
+# Frontend (lo añadiremos cuando creemos el proyecto de React)
+frontend/node_modules/
+frontend/dist/
+
+# Docker

@@ -1,0 +1,57 @@
+# Docker Compose define y coordina varios contenedores que trabajan juntos,
+# como si fueran piezas de una misma aplicacion, en vez de tener que
+# arrancarlos uno a uno a mano con "docker run"
+
+services:
+
+  # --- Base de datos PostgreSQL ---
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: taskflow
+      POSTGRES_PASSWORD: taskflow_dev_password
+      POSTGRES_DB: taskflow
+    ports:
+      - "5432:5432"
+    volumes:
+      # Los datos de la BD se guardan en un "volumen" con nombre, para que
+      # sobrevivan aunque el contenedor se borre y se vuelva a crear
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # Docker comprueba periodicamente si Postgres ya esta listo para
+      # aceptar conexiones, antes de dejar arrancar la API (ver "depends_on")
+      test: [ "CMD-SHELL", "pg_isready -U taskflow" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # --- Redis, usado para el sistema de tiempo real (WebSockets) ---
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+
+  # --- Nuestra API (FastAPI) ---
+  api:
+    build: ./backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://taskflow:taskflow_dev_password@db:5432/taskflow
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      # Monta tu carpeta backend dentro del contenedor, para que los
+      # cambios de codigo se reflejen sin reconstruir la imagen (solo en desarrollo)
+      - ./backend:/app
+
+# Declaracion del volumen con nombre usado arriba
+volumes:
+  postgres_data:
