@@ -1,0 +1,30 @@
+name: Backend Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        working-directory: ./backend
+        run: |
+          pip install -r requirements.txt
+          pip install pytest httpx
+
+      - name: Ejecutar tests
+        working-directory: ./backend
+        run: pytest
