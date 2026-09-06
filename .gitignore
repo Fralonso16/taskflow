@@ -5,7 +5,7 @@ backend/**/__pycache__/
 *.pyc
 backend/.env
 
-# Frontend (lo añadiremos cuando creemos el proyecto de React)
+# Frontend 
 frontend/node_modules/
 frontend/dist/
 

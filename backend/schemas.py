@@ -55,22 +55,6 @@ class BoardMemberInvite(BaseModel):
     username: str  # invitar a alguien por su nombre de usuario
 
 
-# --- Lista (columna) ---
-
-class ListCreate(BaseModel):
-    name: str
-    position: Optional[int] = 0
-
-
-class ListOut(BaseModel):
-    id: int
-    name: str
-    position: int
-    board_id: int
-
-    model_config = {"from_attributes": True}
-
-
 # --- Tarjeta ---
 
 class CardCreate(BaseModel):
@@ -83,7 +67,7 @@ class CardUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     position: Optional[int] = None
-    list_id: Optional[int] = None  # para mover la tarjeta a otra lista
+    list_id: Optional[int] = None
 
 
 class CardOut(BaseModel):
@@ -93,5 +77,25 @@ class CardOut(BaseModel):
     position: int
     list_id: int
     created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+# --- Lista (columna) ---
+
+class ListCreate(BaseModel):
+    name: str
+    position: Optional[int] = 0
+
+
+class ListOut(BaseModel):
+    id: int
+    name: str
+    position: int
+    board_id: int
+    # Al incluir esto, cada lista devuelve tambien sus tarjetas -
+    # es lo que necesita el frontend para dibujar el tablero completo
+    # de una sola llamada, en vez de pedir las tarjetas por separado
+    cards: list[CardOut] = []
 
     model_config = {"from_attributes": True}
