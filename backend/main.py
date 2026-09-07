@@ -4,11 +4,24 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import Base, engine
 from routers import auth, boards, lists, cards, ws
 
-# Crea todas las tablas definidas en models.py si no existen aun
-# (User, Board, BoardMember, List, Card - las 5 a la vez)
-Base.metadata.create_all(bind=engine)
+from contextlib import asynccontextmanager
 
-app = FastAPI(title="TaskFlow API")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Todo lo de ANTES del "yield" se ejecuta al arrancar la aplicacion
+    # (equivalente a lo que antes hacia @app.on_event("startup")).
+    # Igual que antes, esto solo ocurre si la app arranca de verdad,
+    # no simplemente al importar el archivo - por eso los tests, que
+    # sustituyen la conexion por una de prueba, nunca llegan a intentar
+    # conectarse a la base de datos real
+    Base.metadata.create_all(bind=engine)
+    yield
+    # Todo lo de DESPUES del "yield" se ejecutaria al apagar la
+    # aplicacion (no necesitamos nada aqui por ahora)
+
+
+app = FastAPI(title="TaskFlow API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
