@@ -27,4 +27,7 @@ jobs:
 
       - name: Ejecutar tests
         working-directory: ./backend
+        env:
+          DATABASE_URL: "postgresql://usuario:clave@localhost:5432/db_falsa"
+          SECRET_KEY: "clave-de-test-solo-para-ci"
         run: pytest
