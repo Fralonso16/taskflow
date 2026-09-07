@@ -1,6 +1,6 @@
 // URL base de nuestra API backend. La cambiaremos por la URL real
 // cuando despleguemos en Render, igual que hicimos en los proyectos anteriores
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "https://taskflow-api-8wia.onrender.com";
 
 // Funcion auxiliar: guarda el token JWT en el almacenamiento del navegador,
 // para que sobreviva aunque recargues la pagina

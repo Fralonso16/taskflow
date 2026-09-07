@@ -22,7 +22,9 @@ function BoardPage() {
     useEffect(() => {
         loadBoardData();
 
-        const ws = new WebSocket(`ws://127.0.0.1:8000/ws/boards/${boardId}`);
+        // wss:// en vez de ws:// - es la version "segura" de WebSocket,
+        // necesaria porque el sitio se sirve por HTTPS en produccion
+        const ws = new WebSocket(`wss://taskflow-api-8wia.onrender.com/ws/boards/${boardId}`);
         wsRef.current = ws;
 
         ws.onmessage = () => {
