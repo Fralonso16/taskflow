@@ -10,6 +10,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    # services: contenedores auxiliares que GitHub Actions levanta
+    # ANTES de ejecutar los pasos, y para automaticamente al terminar.
+    # Es el mismo concepto que Docker Compose, pero dentro del workflow
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
     steps:
       - name: Descargar el codigo
         uses: actions/checkout@v4
@@ -30,4 +39,5 @@ jobs:
         env:
           DATABASE_URL: "postgresql://usuario:clave@localhost:5432/db_falsa"
           SECRET_KEY: "clave-de-test-solo-para-ci"
+          REDIS_URL: "redis://localhost:6379"
         run: pytest
